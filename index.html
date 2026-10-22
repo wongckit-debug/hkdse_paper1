@@ -68,21 +68,54 @@
 </head>
 <body class="min-h-screen flex flex-col lg:flex-row text-slate-900">
 
-  <!-- Left-Hand Navigation Panel (Sidebar on Desktop, Compact Panel on Mobile) -->
-  <aside class="w-full lg:w-72 xl:w-80 shrink-0 bg-white/95 backdrop-blur-md border-b lg:border-b-0 lg:border-r border-indigo-100 shadow-sm lg:sticky lg:top-0 lg:h-screen lg:overflow-y-auto custom-scrollbar z-30 flex flex-col justify-between p-4 sm:p-5 gap-5">
+  <!-- Top-Left Mobile Navigation Toggle Bar (Visible only on phones/tablets < lg) -->
+  <div class="lg:hidden sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-indigo-100 px-3.5 py-2.5 flex items-center justify-between shadow-sm">
+    <div class="flex items-center gap-2.5">
+      <button id="btnOpenMobileNav" type="button" aria-label="Open Navigation Menu" aria-expanded="false" class="inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 text-white text-xs font-extrabold shadow-sm hover:from-indigo-700 hover:to-violet-700 active:scale-95 transition">
+        <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+        </svg>
+        <span id="mobileMenuBtnLabel">Menu</span>
+      </button>
+      <div class="flex items-center gap-2 min-w-0">
+        <div class="w-7 h-7 shrink-0 rounded-lg bg-gradient-to-br from-indigo-600 via-violet-600 to-fuchsia-600 flex items-center justify-center text-white font-extrabold text-xs shadow-sm">
+          DSE
+        </div>
+        <span class="text-sm font-extrabold tracking-tight text-slate-900 truncate">HKDSE Paper 1 Hub</span>
+      </div>
+    </div>
+    <div class="flex items-center gap-1.5 text-[11px] font-bold text-emerald-800 bg-emerald-50 border border-emerald-200 px-2.5 py-1 rounded-lg shrink-0">
+      <span>✓ <strong id="mobileCompletedCount">0</strong></span>
+      <span class="text-emerald-300">|</span>
+      <span id="mobileAccuracy">0%</span>
+    </div>
+  </div>
+
+  <!-- Mobile Off-Canvas Backdrop Overlay -->
+  <div id="mobileNavBackdrop" class="fixed inset-0 bg-slate-900/45 backdrop-blur-xs z-40 hidden lg:hidden transition-opacity"></div>
+
+  <!-- Left-Hand Navigation Panel (Sidebar on Desktop, Off-Canvas Drawer on Mobile) -->
+  <aside id="mainSidebar" class="fixed inset-y-0 left-0 z-50 w-72 sm:w-80 max-w-[85vw] lg:w-72 xl:w-80 shrink-0 bg-white/95 backdrop-blur-md border-r border-indigo-100 shadow-2xl lg:shadow-sm transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out lg:sticky lg:top-0 lg:h-screen overflow-y-auto custom-scrollbar lg:z-30 flex flex-col justify-between p-4 sm:p-5 gap-5">
     <div class="space-y-5">
       <!-- Brand & Student Level Badge -->
       <div class="space-y-3 pb-4 border-b border-slate-100">
-        <div class="flex items-center gap-3">
-          <div class="w-10 h-10 shrink-0 rounded-2xl bg-gradient-to-br from-indigo-600 via-violet-600 to-fuchsia-600 flex items-center justify-center text-white font-extrabold text-base shadow-md shadow-indigo-200">
-            DSE
+        <div class="flex items-center justify-between gap-2">
+          <div class="flex items-center gap-3 min-w-0">
+            <div class="w-10 h-10 shrink-0 rounded-2xl bg-gradient-to-br from-indigo-600 via-violet-600 to-fuchsia-600 flex items-center justify-center text-white font-extrabold text-base shadow-md shadow-indigo-200">
+              DSE
+            </div>
+            <div class="min-w-0">
+              <h1 id="appMainTitle" class="text-base sm:text-lg font-extrabold tracking-tight bg-gradient-to-r from-indigo-950 via-indigo-800 to-violet-800 bg-clip-text text-transparent truncate">
+                HKDSE Paper 1 Hub
+              </h1>
+              <p class="text-[11px] font-semibold text-slate-500">Reading Comprehension Quest</p>
+            </div>
           </div>
-          <div class="min-w-0">
-            <h1 id="appMainTitle" class="text-base sm:text-lg font-extrabold tracking-tight bg-gradient-to-r from-indigo-950 via-indigo-800 to-violet-800 bg-clip-text text-transparent truncate">
-              HKDSE Paper 1 Hub
-            </h1>
-            <p class="text-[11px] font-semibold text-slate-500">Reading Comprehension Quest</p>
-          </div>
+          <button id="btnCloseMobileNav" type="button" aria-label="Close Navigation Menu" class="lg:hidden p-2 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition shrink-0">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
         </div>
 
         <div id="studentRankBadge" class="w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-bold bg-gradient-to-r from-amber-50 to-orange-50 text-amber-800 border border-amber-200/80 shadow-sm" title="Answer questions correctly to level up your DSE rank!">
@@ -183,108 +216,126 @@
     <!-- ========================================== -->
     <section id="practiceWorkspace" class="space-y-6">
 
-      <!-- Mode Context Banner & Filter Bar -->
-      <div class="bg-white/95 backdrop-blur rounded-2xl border border-indigo-100 p-4 sm:p-5 shadow-sm space-y-4">
-        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div class="space-y-1">
-            <span id="modeBadge" class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-indigo-50 text-indigo-700 border border-indigo-200/60">
-              Question Type Focus
-            </span>
+      <!-- Mode Context Banner & Filter Bar (Collapsible) -->
+      <div class="bg-white/95 backdrop-blur rounded-2xl border border-indigo-100 p-4 sm:p-5 shadow-sm transition-all">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-3">
+          <div class="space-y-1 min-w-0">
+            <div class="flex flex-wrap items-center gap-2">
+              <span id="modeBadge" class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-indigo-50 text-indigo-700 border border-indigo-200/60">
+                Question Type Focus
+              </span>
+              <span id="collapsedFilterSummary" class="hidden inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-bold bg-violet-50 text-violet-800 border border-violet-200">
+                All (895)
+              </span>
+            </div>
             <h2 id="modeHeading" class="text-lg sm:text-xl font-extrabold text-slate-900">
               Practice All HKDSE Questions by Question Type
             </h2>
-            <p id="modeSubheading" class="text-xs sm:text-sm text-slate-600">
-              Select a specific HKDSE Paper 1 question type below. Every question includes its exact paragraph excerpt so you can train targeted skills across years.
-            </p>
           </div>
 
-          <!-- Study Timer & Quick Progress Bar -->
-          <div class="flex flex-wrap items-center gap-2 bg-gradient-to-r from-slate-50 to-indigo-50/50 border border-indigo-100 rounded-xl px-3.5 py-2 self-start md:self-auto">
-            <span class="text-xs text-slate-600 font-bold" id="timerLabelText">⏱️ Timer:</span>
-            <div id="timerDisplay" class="font-mono text-sm sm:text-base font-extrabold text-indigo-950 w-14 text-center">00:00</div>
-            <button id="btnToggleTimer" type="button" class="px-2.5 py-1 rounded-lg text-xs font-bold bg-indigo-600 text-white hover:bg-indigo-700 transition shadow-sm">
-              Start
-            </button>
-            <button id="btnResetTimer" type="button" class="px-2 py-1 rounded-lg text-xs font-semibold text-slate-600 hover:bg-slate-200 transition">
-              Reset
+          <!-- Right Controls: Study Timer + Collapse/Expand Toggle Button -->
+          <div class="flex flex-wrap items-center gap-2 self-start md:self-auto shrink-0">
+            <div class="flex items-center gap-2 bg-gradient-to-r from-slate-50 to-indigo-50/50 border border-indigo-100 rounded-xl px-3 py-1.5">
+              <span class="text-xs text-slate-600 font-bold" id="timerLabelText">⏱️ Timer:</span>
+              <div id="timerDisplay" class="font-mono text-sm sm:text-base font-extrabold text-indigo-950 w-14 text-center">00:00</div>
+              <button id="btnToggleTimer" type="button" class="px-2.5 py-1 rounded-lg text-xs font-bold bg-indigo-600 text-white hover:bg-indigo-700 transition shadow-sm">
+                Start
+              </button>
+              <button id="btnResetTimer" type="button" class="px-2 py-1 rounded-lg text-xs font-semibold text-slate-600 hover:bg-slate-200 transition">
+                Reset
+              </button>
+            </div>
+
+            <button id="btnToggleFilterBar" type="button" aria-expanded="true" aria-controls="filterBarCollapsible" class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-extrabold bg-indigo-50 text-indigo-700 hover:bg-indigo-100 border border-indigo-200/80 transition shadow-xs cursor-pointer" title="Collapse or expand the category & filter panel">
+              <span id="toggleFilterBarText">Hide Filters (收起篩選)</span>
+              <svg id="toggleFilterBarIcon" class="w-4 h-4 transition-transform duration-200" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M5 15l7-7 7 7" />
+              </svg>
             </button>
           </div>
         </div>
 
-        <!-- Primary Category Pills (Dynamic based on Mode: Question Types, Topics, or Years) -->
-        <div id="primaryFilterPills" class="flex flex-wrap gap-2 pt-1"></div>
+        <!-- Collapsible Filter & Category Section -->
+        <div id="filterBarCollapsible" class="space-y-4 pt-3 mt-3 border-t border-slate-100">
+          <p id="modeSubheading" class="text-xs sm:text-sm text-slate-600">
+            Select a specific HKDSE Paper 1 question type below. Every question includes its exact paragraph excerpt so you can train targeted skills across years.
+          </p>
 
-        <!-- Question Type Strategy Guide Card (Shown in By-Type Mode when a specific type is selected) -->
-        <div id="typeStrategyCard" class="hidden bg-gradient-to-r from-indigo-50/90 via-violet-50/50 to-indigo-50/40 border border-indigo-200/80 rounded-xl p-4 animate-pop">
-          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-2 border-b border-indigo-100">
+          <!-- Primary Category Pills (Dynamic based on Mode: Question Types, Topics, or Years) -->
+          <div id="primaryFilterPills" class="flex flex-wrap gap-2 pt-0.5"></div>
+
+          <!-- Question Type Strategy Guide Card (Shown in By-Type Mode when a specific type is selected) -->
+          <div id="typeStrategyCard" class="hidden bg-gradient-to-r from-indigo-50/90 via-violet-50/50 to-indigo-50/40 border border-indigo-200/80 rounded-xl p-4 animate-pop">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-2 border-b border-indigo-100">
+              <div class="flex items-center gap-2">
+                <span id="strategyBadgeLabel" class="px-2.5 py-0.5 rounded-lg bg-indigo-600 text-white text-xs font-bold">💡 DSE Exam Strategy</span>
+                <h3 id="strategyTitle" class="text-sm font-extrabold text-indigo-950"></h3>
+              </div>
+              <span id="strategyFreqBadge" class="text-xs font-semibold text-indigo-700"></span>
+            </div>
+            <div id="strategyGrid" class="grid grid-cols-1 md:grid-cols-2 gap-3 mt-3 text-xs sm:text-sm">
+              <div class="bg-white/80 rounded-lg p-3 border border-indigo-100/80">
+                <p class="font-bold text-slate-800 mb-1">Key Answering Steps:</p>
+                <p id="strategyEn" class="text-slate-600 leading-relaxed"></p>
+              </div>
+              <div id="strategyZhBlock" class="bg-white/90 rounded-lg p-3 border border-indigo-100">
+                <p class="font-bold text-indigo-900 mb-1">中文解題核心攻略：</p>
+                <p id="strategyZh" class="text-slate-700 leading-relaxed"></p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Secondary Filters (Part A / B1 / B2, Status, Search) -->
+          <div class="flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-slate-100">
+            <div class="flex flex-wrap items-center gap-2">
+              <!-- Section Filter -->
+              <label for="filterPart" class="sr-only">Paper Section</label>
+              <select id="filterPart" class="text-xs sm:text-sm bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-700 font-semibold focus:outline-none focus:ring-2 focus:ring-indigo-500 cursor-pointer">
+                <option value="ALL" id="optPartAll">All Sections (Part A + B1 + B2)</option>
+                <option value="Part A" id="optPartA">Part A (Compulsory)</option>
+                <option value="Part B1" id="optPartB1">Part B1 (Easier Section)</option>
+                <option value="Part B2" id="optPartB2">Part B2 (Extended Section)</option>
+              </select>
+
+              <!-- DSE Level (1 to 5**) Filter -->
+              <label for="filterLevel" class="sr-only">DSE Difficulty Level</label>
+              <select id="filterLevel" class="text-xs sm:text-sm bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-700 font-semibold focus:outline-none focus:ring-2 focus:ring-indigo-500 cursor-pointer">
+                <option value="ALL" id="optLevelAll">All Levels (Lv.1 – 5**)</option>
+                <option value="5**" id="optLevel5ss">👑 Level 5** (≤22% Correct)</option>
+                <option value="5*" id="optLevel5s">💎 Level 5* (23%–36% Correct)</option>
+                <option value="5" id="optLevel5">🔥 Level 5 (37%–50% Correct)</option>
+                <option value="4" id="optLevel4">⚡ Level 4 (51%–64% Correct)</option>
+                <option value="3" id="optLevel3">🍀 Level 3 (65%–76% Correct)</option>
+                <option value="2" id="optLevel2">🌿 Level 2 (77%–85% Correct)</option>
+                <option value="1" id="optLevel1">🌱 Level 1 (≥86% Correct)</option>
+              </select>
+
+              <!-- Status Filter -->
+              <label for="filterStatus" class="sr-only">Completion Status</label>
+              <select id="filterStatus" class="text-xs sm:text-sm bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-700 font-semibold focus:outline-none focus:ring-2 focus:ring-indigo-500 cursor-pointer">
+                <option value="ALL" id="optStatusAll">All Questions</option>
+                <option value="UNANSWERED" id="optStatusUnanswered">Unanswered Only</option>
+                <option value="INCORRECT" id="optStatusIncorrect">Needs Review / Incorrect</option>
+                <option value="CORRECT" id="optStatusCorrect">Mastered / Correct</option>
+                <option value="BOOKMARKED" id="optStatusBookmarked">Bookmarked ★</option>
+              </select>
+
+              <!-- Search Input -->
+              <div class="relative">
+                <input id="searchKeyword" type="text" placeholder="Search keyword, year, or skill..." class="text-xs sm:text-sm bg-slate-50 border border-slate-200 rounded-xl pl-3.5 pr-8 py-2 w-48 sm:w-64 font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+                <button id="btnClearSearch" type="button" class="hidden absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 text-xs font-bold">✕</button>
+              </div>
+            </div>
+
             <div class="flex items-center gap-2">
-              <span id="strategyBadgeLabel" class="px-2.5 py-0.5 rounded-lg bg-indigo-600 text-white text-xs font-bold">💡 DSE Exam Strategy</span>
-              <h3 id="strategyTitle" class="text-sm font-extrabold text-indigo-950"></h3>
+              <span id="filteredCountLabel" class="text-xs font-bold text-indigo-700 bg-indigo-50 px-2.5 py-1 rounded-lg">Showing 0 questions</span>
+              <button id="btnCheckAllVisible" type="button" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-indigo-50 text-indigo-700 hover:bg-indigo-100 border border-indigo-200 transition">
+                Check All Answered
+              </button>
+              <button id="btnRevealAllVisible" type="button" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-100 text-slate-700 hover:bg-slate-200 transition">
+                Show All Explanations
+              </button>
             </div>
-            <span id="strategyFreqBadge" class="text-xs font-semibold text-indigo-700"></span>
-          </div>
-          <div id="strategyGrid" class="grid grid-cols-1 md:grid-cols-2 gap-3 mt-3 text-xs sm:text-sm">
-            <div class="bg-white/80 rounded-lg p-3 border border-indigo-100/80">
-              <p class="font-bold text-slate-800 mb-1">Key Answering Steps:</p>
-              <p id="strategyEn" class="text-slate-600 leading-relaxed"></p>
-            </div>
-            <div id="strategyZhBlock" class="bg-white/90 rounded-lg p-3 border border-indigo-100">
-              <p class="font-bold text-indigo-900 mb-1">中文解題核心攻略：</p>
-              <p id="strategyZh" class="text-slate-700 leading-relaxed"></p>
-            </div>
-          </div>
-        </div>
-
-        <!-- Secondary Filters (Part A / B1 / B2, Status, Search) -->
-        <div class="flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-slate-100">
-          <div class="flex flex-wrap items-center gap-2">
-            <!-- Section Filter -->
-            <label for="filterPart" class="sr-only">Paper Section</label>
-            <select id="filterPart" class="text-xs sm:text-sm bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-700 font-semibold focus:outline-none focus:ring-2 focus:ring-indigo-500 cursor-pointer">
-              <option value="ALL" id="optPartAll">All Sections (Part A + B1 + B2)</option>
-              <option value="Part A" id="optPartA">Part A (Compulsory)</option>
-              <option value="Part B1" id="optPartB1">Part B1 (Easier Section)</option>
-              <option value="Part B2" id="optPartB2">Part B2 (Extended Section)</option>
-            </select>
-
-            <!-- DSE Level (1 to 5**) Filter -->
-            <label for="filterLevel" class="sr-only">DSE Difficulty Level</label>
-            <select id="filterLevel" class="text-xs sm:text-sm bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-700 font-semibold focus:outline-none focus:ring-2 focus:ring-indigo-500 cursor-pointer">
-              <option value="ALL" id="optLevelAll">All Levels (Lv.1 – 5**)</option>
-              <option value="5**" id="optLevel5ss">👑 Level 5** (≤22% Correct)</option>
-              <option value="5*" id="optLevel5s">💎 Level 5* (23%–36% Correct)</option>
-              <option value="5" id="optLevel5">🔥 Level 5 (37%–50% Correct)</option>
-              <option value="4" id="optLevel4">⚡ Level 4 (51%–64% Correct)</option>
-              <option value="3" id="optLevel3">🍀 Level 3 (65%–76% Correct)</option>
-              <option value="2" id="optLevel2">🌿 Level 2 (77%–85% Correct)</option>
-              <option value="1" id="optLevel1">🌱 Level 1 (≥86% Correct)</option>
-            </select>
-
-            <!-- Status Filter -->
-            <label for="filterStatus" class="sr-only">Completion Status</label>
-            <select id="filterStatus" class="text-xs sm:text-sm bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-700 font-semibold focus:outline-none focus:ring-2 focus:ring-indigo-500 cursor-pointer">
-              <option value="ALL" id="optStatusAll">All Questions</option>
-              <option value="UNANSWERED" id="optStatusUnanswered">Unanswered Only</option>
-              <option value="INCORRECT" id="optStatusIncorrect">Needs Review / Incorrect</option>
-              <option value="CORRECT" id="optStatusCorrect">Mastered / Correct</option>
-              <option value="BOOKMARKED" id="optStatusBookmarked">Bookmarked ★</option>
-            </select>
-
-            <!-- Search Input -->
-            <div class="relative">
-              <input id="searchKeyword" type="text" placeholder="Search keyword, year, or skill..." class="text-xs sm:text-sm bg-slate-50 border border-slate-200 rounded-xl pl-3.5 pr-8 py-2 w-48 sm:w-64 font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500" />
-              <button id="btnClearSearch" type="button" class="hidden absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 text-xs font-bold">✕</button>
-            </div>
-          </div>
-
-          <div class="flex items-center gap-2">
-            <span id="filteredCountLabel" class="text-xs font-bold text-indigo-700 bg-indigo-50 px-2.5 py-1 rounded-lg">Showing 0 questions</span>
-            <button id="btnCheckAllVisible" type="button" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-indigo-50 text-indigo-700 hover:bg-indigo-100 border border-indigo-200 transition">
-              Check All Answered
-            </button>
-            <button id="btnRevealAllVisible" type="button" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-100 text-slate-700 hover:bg-slate-200 transition">
-              Show All Explanations
-            </button>
           </div>
         </div>
       </div>
@@ -35691,6 +35742,7 @@
       filterLevel: "ALL",
       filterStatus: "ALL",
       searchKeyword: "",
+      filterBarCollapsed: false,
       showFullPassage: true,
       questions: [],
       // userProgress[questionId] = { userValue, checked, isCorrect, subResults, bookmarked, showExplanation, showHint }
@@ -36043,6 +36095,12 @@
       document.getElementById("headerCompletedCount").textContent = String(completed);
       document.getElementById("headerTotalCount").textContent = String(total);
       document.getElementById("headerAccuracy").textContent = acc + "%";
+      const mobCompEl = document.getElementById("mobileCompletedCount");
+      const mobAccEl = document.getElementById("mobileAccuracy");
+      if (mobCompEl) mobCompEl.textContent = `${completed}/${total}`;
+      if (mobAccEl) mobAccEl.textContent = acc + "%";
+      const mobMenuLbl = document.getElementById("mobileMenuBtnLabel");
+      if (mobMenuLbl) mobMenuLbl.textContent = uiText("Menu", "選單");
       document.getElementById("streakCount").textContent = String(state.streak || 0);
 
       // Compute Student DSE Rank
@@ -36317,6 +36375,34 @@
         `Showing ${filtered.length} question${filtered.length === 1 ? "" : "s"}`,
         `顯示 ${filtered.length} 題`
       );
+
+      // Update Collapsible Filter Bar UI
+      const collapsibleEl = document.getElementById("filterBarCollapsible");
+      const toggleBtn = document.getElementById("btnToggleFilterBar");
+      const toggleText = document.getElementById("toggleFilterBarText");
+      const toggleIcon = document.getElementById("toggleFilterBarIcon");
+      const collapsedSummary = document.getElementById("collapsedFilterSummary");
+
+      if (collapsibleEl && toggleBtn && toggleText && toggleIcon && collapsedSummary) {
+        if (state.filterBarCollapsed) {
+          collapsibleEl.classList.add("hidden");
+          toggleBtn.setAttribute("aria-expanded", "false");
+          toggleText.textContent = uiText("Show Filters", "Show Filters (展開篩選)");
+          toggleIcon.classList.add("rotate-180");
+          const activePillLabel = state.selectedPrimaryPill === "ALL" ? uiText("All", "全部") : state.selectedPrimaryPill;
+          collapsedSummary.textContent = uiText(
+            `${activePillLabel} • ${filtered.length} Qs`,
+            `${activePillLabel} • 顯示 ${filtered.length} 題`
+          );
+          collapsedSummary.classList.remove("hidden");
+        } else {
+          collapsibleEl.classList.remove("hidden");
+          toggleBtn.setAttribute("aria-expanded", "true");
+          toggleText.textContent = uiText("Hide Filters", "Hide Filters (收起篩選)");
+          toggleIcon.classList.remove("rotate-180");
+          collapsedSummary.classList.add("hidden");
+        }
+      }
 
       // Full Passage Banner in 'by-year' mode
       const fullPassageBanner = document.getElementById("fullPassageBanner");
@@ -37285,6 +37371,42 @@
         showToast(uiText("All practice progress has been reset.", "已重設所有作答進度。"));
       });
 
+      // Mobile navigation drawer helpers
+      const sidebarEl = document.getElementById("mainSidebar");
+      const backdropEl = document.getElementById("mobileNavBackdrop");
+      const openNavBtn = document.getElementById("btnOpenMobileNav");
+      const closeNavBtn = document.getElementById("btnCloseMobileNav");
+
+      function openMobileNav() {
+        if (!sidebarEl || !backdropEl) return;
+        sidebarEl.classList.remove("-translate-x-full");
+        backdropEl.classList.remove("hidden");
+        if (openNavBtn) openNavBtn.setAttribute("aria-expanded", "true");
+        document.body.classList.add("overflow-hidden", "lg:overflow-auto");
+      }
+
+      function closeMobileNav() {
+        if (!sidebarEl || !backdropEl) return;
+        sidebarEl.classList.add("-translate-x-full");
+        backdropEl.classList.add("hidden");
+        if (openNavBtn) openNavBtn.setAttribute("aria-expanded", "false");
+        document.body.classList.remove("overflow-hidden", "lg:overflow-auto");
+      }
+
+      if (openNavBtn) openNavBtn.addEventListener("click", openMobileNav);
+      if (closeNavBtn) closeNavBtn.addEventListener("click", closeMobileNav);
+      if (backdropEl) backdropEl.addEventListener("click", closeMobileNav);
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") closeMobileNav();
+      });
+
+      const randomBtn = document.getElementById("btnRandomChallenge");
+      if (randomBtn) {
+        randomBtn.addEventListener("click", () => {
+          closeMobileNav();
+        });
+      }
+
       // Mode switching tabs
       document.querySelectorAll(".mode-tab").forEach((btn) => {
         btn.addEventListener("click", () => {
@@ -37292,6 +37414,7 @@
           state.mode = targetMode;
           state.selectedPrimaryPill = "ALL";
           renderModeTabs();
+          closeMobileNav();
         });
       });
 
@@ -37371,6 +37494,15 @@
         renderPracticeWorkspace();
         showToast(uiText("Showing explanations for all visible questions.", "已顯示目前所有題目的詳解。"));
       });
+
+      // Toggle Collapsible Filter Bar
+      const btnToggleFilterBar = document.getElementById("btnToggleFilterBar");
+      if (btnToggleFilterBar) {
+        btnToggleFilterBar.addEventListener("click", () => {
+          state.filterBarCollapsed = !state.filterBarCollapsed;
+          renderPracticeWorkspace();
+        });
+      }
 
       // Toggle Full Passage in By-Year mode
       document.getElementById("btnToggleFullPassage").addEventListener("click", () => {
